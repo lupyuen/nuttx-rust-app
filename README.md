@@ -65,7 +65,7 @@ $ rustc \
 }
 ```
 
-TODO: riscv32gc-unknown-none-elf
+TODO: riscv32gc-unknown-none-elf.json
 
 ```json
 {
@@ -91,3 +91,24 @@ TODO: riscv32gc-unknown-none-elf
 - Added `"features": "+m,+a,+f,+d,+c"`
 
 - Changed to `"is-builtin": false`
+
+TODO: Compile Rust App
+
+```bash
+## Changed target to riscv32gc-unknown-none-elf.json
+rustc \
+  --edition 2021 \
+  --emit obj \
+  -g \
+  --target riscv32gc-unknown-none-elf.json \
+  -C panic=abort \
+  -O \
+  hello_rust_main.rs \
+  -o hello_rust_main.rs...apps.examples.hello_rust.o
+
+cp \
+  hello_rust_main.rs...apps.examples.hello_rust.o \
+  hello_rust_main.rs...apps.examples.hello_rust_1.o
+
+make
+```
