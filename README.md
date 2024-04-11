@@ -99,10 +99,12 @@ Based on https://lupyuen.github.io/articles/rust#custom-rust-target-for-bl602
 TODO: Compile Rust App
 
 ```bash
+## Verify our Custom Target
 rustc \
   --print cfg \
   --target riscv32gc-unknown-none-elf.json
 
+## Ignore the error: `app already exists`
 cargo new app
 pushd app
 cargo clean
@@ -113,32 +115,22 @@ cargo build \
 popd
 
 ## Changed target to riscv32gc-unknown-none-elf.json
-# rustc \
-#   --edition 2021 \
-#   --emit obj \
-#   -g \
-#   --target riscv32gc-unknown-none-elf.json \
-#   -C panic=abort \
-#   -O \
-#   ../apps/examples/hello_rust/hello_rust_main.rs \
-#   -o ../apps/examples/hello_rust/*hello_rust.o
-
 rustc \
   --edition 2021 \
   --emit obj \
   -g \
-  --target /Users/Luppy/riscv/nuttx-rust-app/riscv32gc-unknown-none-elf.json \
+  --target riscv32gc-unknown-none-elf.json \
   -C panic=abort \
   -O \
   ../apps/examples/hello_rust/hello_rust_main.rs \
   -o ../apps/examples/hello_rust/*hello_rust.o \
   \
-  -C incremental=/Users/Luppy/riscv/nuttx-rust-app/app/target/riscv32gc-unknown-none-elf/debug/incremental \
-  -L dependency=/Users/Luppy/riscv/nuttx-rust-app/app/target/riscv32gc-unknown-none-elf/debug/deps \
-  -L dependency=/Users/Luppy/riscv/nuttx-rust-app/app/target/debug/deps \
-  --extern noprelude:alloc=`ls /Users/Luppy/riscv/nuttx-rust-app/app/target/riscv32gc-unknown-none-elf/debug/deps/liballoc-*.rlib` \
-  --extern noprelude:compiler_builtins=`ls /Users/Luppy/riscv/nuttx-rust-app/app/target/riscv32gc-unknown-none-elf/debug/deps/libcompiler_builtins-*.rlib` \
-  --extern noprelude:core=`ls /Users/Luppy/riscv/nuttx-rust-app/app/target/riscv32gc-unknown-none-elf/debug/deps/libcore-*.rlib` \
+  -C incremental=app/target/riscv32gc-unknown-none-elf/debug/incremental \
+  -L dependency=app/target/riscv32gc-unknown-none-elf/debug/deps \
+  -L dependency=app/target/debug/deps \
+  --extern noprelude:alloc=`ls app/target/riscv32gc-unknown-none-elf/debug/deps/liballoc-*.rlib` \
+  --extern noprelude:compiler_builtins=`ls app/target/riscv32gc-unknown-none-elf/debug/deps/libcompiler_builtins-*.rlib` \
+  --extern noprelude:core=`ls app/target/riscv32gc-unknown-none-elf/debug/deps/libcore-*.rlib` \
   -Z unstable-options
 
 ## Should show:
