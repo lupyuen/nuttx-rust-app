@@ -167,7 +167,7 @@ Based on the above, we create our Rust Custom Target: [riscv32gc-unknown-none-el
 }
 ```
 
-We took `riscv32i` and changed the following...
+Which is based on `riscv32i` with these changes...
 
 - Removed `"atomic-cas": false`
 
