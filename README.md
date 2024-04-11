@@ -145,16 +145,150 @@ rustc \
 ## Flags: 0x5, RVC, double-float ABI
 riscv64-unknown-elf-readelf \
   -h -A \
-  ../apps/examples/hello_rust/*hello_rust_1.o
+  ../apps/examples/hello_rust/*hello_rust.o
 
 cp \
   ../apps/examples/hello_rust/*hello_rust.o \
   ../apps/examples/hello_rust/*hello_rust_1.o
 
+pushd ../nuttx
 make
+qemu-system-riscv32 \
+  -semihosting \
+  -M virt,aclint=on \
+  -cpu rv32 \
+  -smp 8 \
+  -bios none \
+  -kernel nuttx \
+  -nographic
+popd
 ```
 
-TODO
+TODO: Compile hello.c
+
+```bash
+riscv64-unknown-elf-gcc \
+  -c \
+  -fno-common \
+  -Wall \
+  -Wstrict-prototypes \
+  -Wshadow \
+  -Wundef \
+  -Wno-attributes \
+  -Wno-unknown-pragmas \
+  -Wno-psabi \
+  -Os \
+  -fno-strict-aliasing \
+  -fomit-frame-pointer \
+  -ffunction-sections \
+  -fdata-sections \
+  -g \
+  -march=rv32imafdc \
+  -mabi=ilp32d \
+  -isystem /Users/Luppy/riscv/nuttx/include \
+  -D__NuttX__ \
+  -DNDEBUG  \
+  -pipe \
+  -I "/Users/Luppy/riscv/apps/include" \
+  -Dmain=hello_main  hello_main.c \
+  -o  hello_main.c.Users.Luppy.riscv.apps.examples.hello.o \
+```
+
+TODO: Dump ELF Header
+
+```bash
+## Before Custom Target
+→ riscv64-unknown-elf-readelf \
+  -h -A \
+  ../apps/examples/hello_rust/*hello_rust_1.o
+
+ELF Header:
+  Magic:   7f 45 4c 46 01 01 01 00 00 00 00 00 00 00 00 00 
+  Class:                             ELF32
+  Data:                              2's complement, little endian
+  Version:                           1 (current)
+  OS/ABI:                            UNIX - System V
+  ABI Version:                       0
+  Type:                              REL (Relocatable file)
+  Machine:                           RISC-V
+  Version:                           0x1
+  Entry point address:               0x0
+  Start of program headers:          0 (bytes into file)
+  Start of section headers:          10240 (bytes into file)
+  Flags:                             0x0
+  Size of this header:               52 (bytes)
+  Size of program headers:           0 (bytes)
+  Number of program headers:         0
+  Size of section headers:           40 (bytes)
+  Number of section headers:         29
+  Section header string table index: 1
+Attribute Section: riscv
+File Attributes
+  Tag_RISCV_stack_align: 16-bytes
+  Tag_RISCV_arch: "rv32i2p1"
+
+## After Custom Target
+→ riscv64-unknown-elf-readelf \
+  -h -A \
+  ../apps/examples/hello_rust/*hello_rust.o
+
+ELF Header:
+  Magic:   7f 45 4c 46 01 01 01 00 00 00 00 00 00 00 00 00 
+  Class:                             ELF32
+  Data:                              2's complement, little endian
+  Version:                           1 (current)
+  OS/ABI:                            UNIX - System V
+  ABI Version:                       0
+  Type:                              REL (Relocatable file)
+  Machine:                           RISC-V
+  Version:                           0x1
+  Entry point address:               0x0
+  Start of program headers:          0 (bytes into file)
+  Start of section headers:          10352 (bytes into file)
+  Flags:                             0x5, RVC, double-float ABI
+  Size of this header:               52 (bytes)
+  Size of program headers:           0 (bytes)
+  Number of program headers:         0
+  Size of section headers:           40 (bytes)
+  Number of section headers:         29
+  Section header string table index: 1
+Attribute Section: riscv
+File Attributes
+  Tag_RISCV_stack_align: 16-bytes
+  Tag_RISCV_arch: "rv32i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0"
+
+## Compare with other C Binaries
+→ riscv64-unknown-elf-readelf \
+  -h -A \
+  ../apps/examples/hello/*hello.o                 
+
+ELF Header:
+  Magic:   7f 45 4c 46 01 01 01 00 00 00 00 00 00 00 00 00 
+  Class:                             ELF32
+  Data:                              2's complement, little endian
+  Version:                           1 (current)
+  OS/ABI:                            UNIX - System V
+  ABI Version:                       0
+  Type:                              REL (Relocatable file)
+  Machine:                           RISC-V
+  Version:                           0x1
+  Entry point address:               0x0
+  Start of program headers:          0 (bytes into file)
+  Start of section headers:          3776 (bytes into file)
+  Flags:                             0x5, RVC, double-float ABI
+  Size of this header:               52 (bytes)
+  Size of program headers:           0 (bytes)
+  Number of program headers:         0
+  Size of section headers:           40 (bytes)
+  Number of section headers:         26
+  Section header string table index: 25
+Attribute Section: riscv
+File Attributes
+  Tag_RISCV_stack_align: 16-bytes
+  Tag_RISCV_arch: "rv32i2p0_m2p0_a2p0_f2p0_d2p0_c2p0"
+```
+
+TODO: Build Standard Library
 
 ```bash
 → cargo build -v \
@@ -192,96 +326,4 @@ error: could not compile `app` (bin "app") due to 3 previous errors
 
 Caused by:
   process didn't exit successfully: `/Users/Luppy/.rustup/toolchains/nightly-x86_64-apple-darwin/bin/rustc --crate-name app --edition=2021 src/main.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --diagnostic-width=94 --crate-type bin --emit=dep-info,link -C embed-bitcode=no -C debuginfo=2 -C metadata=1ff442e6481e1397 -C extra-filename=-1ff442e6481e1397 --out-dir /Users/Luppy/riscv/nuttx-rust-app/app/target/riscv32gc-unknown-none-elf/debug/deps --target /Users/Luppy/riscv/nuttx-rust-app/riscv32gc-unknown-none-elf.json -C incremental=/Users/Luppy/riscv/nuttx-rust-app/app/target/riscv32gc-unknown-none-elf/debug/incremental -L dependency=/Users/Luppy/riscv/nuttx-rust-app/app/target/riscv32gc-unknown-none-elf/debug/deps -L dependency=/Users/Luppy/riscv/nuttx-rust-app/app/target/debug/deps --extern 'noprelude:alloc=/Users/Luppy/riscv/nuttx-rust-app/app/target/riscv32gc-unknown-none-elf/debug/deps/liballoc-5d7bc2e4f3c29e08.rlib' --extern 'noprelude:compiler_builtins=/Users/Luppy/riscv/nuttx-rust-app/app/target/riscv32gc-unknown-none-elf/debug/deps/libcompiler_builtins-cd0d33c2bd30ca51.rlib' --extern 'noprelude:core=/Users/Luppy/riscv/nuttx-rust-app/app/target/riscv32gc-unknown-none-elf/debug/deps/libcore-d271c6ebb87f9b41.rlib' -Z unstable-options` (exit status: 1)
-```
-
-TODO: Compile hello.c
-
-```bash
-riscv64-unknown-elf-gcc \
-  -c \
-  -fno-common \
-  -Wall \
-  -Wstrict-prototypes \
-  -Wshadow \
-  -Wundef \
-  -Wno-attributes \
-  -Wno-unknown-pragmas \
-  -Wno-psabi \
-  -Os \
-  -fno-strict-aliasing \
-  -fomit-frame-pointer \
-  -ffunction-sections \
-  -fdata-sections \
-  -g \
-  -march=rv32imafdc \
-  -mabi=ilp32d \
-  -isystem /Users/Luppy/riscv/nuttx/include \
-  -D__NuttX__ \
-  -DNDEBUG  \
-  -pipe \
-  -I "/Users/Luppy/riscv/apps/include" \
-  -Dmain=hello_main  hello_main.c \
-  -o  hello_main.c.Users.Luppy.riscv.apps.examples.hello.o \
-```
-
-TODO: Dump ELF Header
-
-```bash
-→ riscv64-unknown-elf-readelf \
-  -h -A \
-  ../apps/examples/hello_rust/*hello_rust_1.o
-
-ELF Header:
-  Magic:   7f 45 4c 46 01 01 01 00 00 00 00 00 00 00 00 00 
-  Class:                             ELF32
-  Data:                              2's complement, little endian
-  Version:                           1 (current)
-  OS/ABI:                            UNIX - System V
-  ABI Version:                       0
-  Type:                              REL (Relocatable file)
-  Machine:                           RISC-V
-  Version:                           0x1
-  Entry point address:               0x0
-  Start of program headers:          0 (bytes into file)
-  Start of section headers:          10352 (bytes into file)
-  Flags:                             0x5, RVC, double-float ABI
-  Size of this header:               52 (bytes)
-  Size of program headers:           0 (bytes)
-  Number of program headers:         0
-  Size of section headers:           40 (bytes)
-  Number of section headers:         29
-  Section header string table index: 1
-Attribute Section: riscv
-File Attributes
-  Tag_RISCV_stack_align: 16-bytes
-  Tag_RISCV_arch: "rv32i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0"
-
-→ riscv64-unknown-elf-readelf \
-  -h -A \
-  ../apps/examples/hello/*hello.o                 
-
-ELF Header:
-  Magic:   7f 45 4c 46 01 01 01 00 00 00 00 00 00 00 00 00 
-  Class:                             ELF32
-  Data:                              2's complement, little endian
-  Version:                           1 (current)
-  OS/ABI:                            UNIX - System V
-  ABI Version:                       0
-  Type:                              REL (Relocatable file)
-  Machine:                           RISC-V
-  Version:                           0x1
-  Entry point address:               0x0
-  Start of program headers:          0 (bytes into file)
-  Start of section headers:          3776 (bytes into file)
-  Flags:                             0x5, RVC, double-float ABI
-  Size of this header:               52 (bytes)
-  Size of program headers:           0 (bytes)
-  Number of program headers:         0
-  Size of section headers:           40 (bytes)
-  Number of section headers:         26
-  Section header string table index: 25
-Attribute Section: riscv
-File Attributes
-  Tag_RISCV_stack_align: 16-bytes
-  Tag_RISCV_arch: "rv32i2p0_m2p0_a2p0_f2p0_d2p0_c2p0"
 ```
