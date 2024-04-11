@@ -98,20 +98,46 @@ rustc \
   --print cfg \
   --target riscv32gc-unknown-none-elf.json
 
+pushd app
 cargo build \
   -Zbuild-std=core,alloc \
-  --target riscv32gc-unknown-none-elf.json
+  --target ../riscv32gc-unknown-none-elf.json
+popd
 
 ## Changed target to riscv32gc-unknown-none-elf.json
+# rustc \
+#   --edition 2021 \
+#   --emit obj \
+#   -g \
+#   --target riscv32gc-unknown-none-elf.json \
+#   -C panic=abort \
+#   -O \
+#   ../apps/examples/hello_rust/hello_rust_main.rs \
+#   -o ../apps/examples/hello_rust/*hello_rust.o
+
 rustc \
   --edition 2021 \
   --emit obj \
   -g \
-  --target riscv32gc-unknown-none-elf.json \
+  --target /Users/Luppy/riscv/nuttx-rust-app/riscv32gc-unknown-none-elf.json \
   -C panic=abort \
   -O \
   ../apps/examples/hello_rust/hello_rust_main.rs \
-  -o ../apps/examples/hello_rust/*hello_rust.o
+  -o ../apps/examples/hello_rust/*hello_rust.o \
+  \
+  -C incremental=/Users/Luppy/riscv/nuttx-rust-app/app/target/riscv32gc-unknown-none-elf/debug/incremental \
+  -L dependency=/Users/Luppy/riscv/nuttx-rust-app/app/target/riscv32gc-unknown-none-elf/debug/deps \
+  -L dependency=/Users/Luppy/riscv/nuttx-rust-app/app/target/debug/deps \
+  --extern 'noprelude:alloc=/Users/Luppy/riscv/nuttx-rust-app/app/target/riscv32gc-unknown-none-elf/debug/deps/liballoc-5d7bc2e4f3c29e08.rlib' \
+  --extern 'noprelude:compiler_builtins=/Users/Luppy/riscv/nuttx-rust-app/app/target/riscv32gc-unknown-none-elf/debug/deps/libcompiler_builtins-cd0d33c2bd30ca51.rlib' \
+  --extern 'noprelude:core=/Users/Luppy/riscv/nuttx-rust-app/app/target/riscv32gc-unknown-none-elf/debug/deps/libcore-d271c6ebb87f9b41.rlib' \
+  -Z unstable-options
+
+## Should show:
+## Flags: 0x4, double-float ABI
+riscv64-unknown-elf-readelf \
+  -h -A \
+  ../apps/examples/hello_rust/*hello_rust_1.o
 
 cp \
   ../apps/examples/hello_rust/*hello_rust.o \
