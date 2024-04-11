@@ -98,6 +98,7 @@ rustc \
   --print cfg \
   --target riscv32gc-unknown-none-elf.json
 
+cargo new app
 pushd app
 cargo build \
   -Zbuild-std=core,alloc \
