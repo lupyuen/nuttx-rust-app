@@ -1,4 +1,6 @@
-![Rust Apps on Apache NuttX RTOS and QEMU RISC-V](https://lupyuen.github.io/images/rust3-title.png)
+![Rust Apps on Apache NuttX RTOS and QEMU RISC-V](https://lupyuen.github.io/images/rust4-title.png)
+
+[_Thanks to cool-retro-term!_](https://github.com/Swordfish90/cool-retro-term)
 
 # Rust Apps for Apache NuttX RTOS and QEMU RISC-V
 
