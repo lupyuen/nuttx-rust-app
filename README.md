@@ -75,6 +75,8 @@ riscv64-unknown-elf-gcc \
   -o  hello_main.c...apps.examples.hello.o \
 ```
 
+![Double-Float vs Soft-Float: GCC Linker won't link the binaries](https://lupyuen.github.io/images/rust4-flow2.jpg)
+
 _Does Rust support Double-Precision Hardware Floating-Point?_
 
 We're looking for a Rust Target like `riscv32gc-unknown-none-elf`...
