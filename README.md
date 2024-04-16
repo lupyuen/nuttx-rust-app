@@ -93,6 +93,8 @@ But nope it's not supported! So we create a Rust Custom Target for `riscv32gc-un
 
 - [Custom Target for Rust](https://docs.rust-embedded.org/embedonomicon/custom-target.html)
 
+![Rust Apps on Apache NuttX RTOS and QEMU RISC-V](https://lupyuen.github.io/images/rust4-flow.jpg)
+
 Let's dump the Rust Targets `riscv32i` and `riscv64gc` to compare...
 
 ```bash
