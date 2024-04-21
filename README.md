@@ -4,11 +4,17 @@
 
 # Rust Apps for Apache NuttX RTOS and QEMU RISC-V
 
-Read the article...
+Read the articles...
+
+- ["Rust Custom Target for QEMU RISC-V on Apache NuttX RTOS"](https://lupyuen.github.io/articles/rust4)
 
 - ["Rust Apps on Apache NuttX RTOS and QEMU RISC-V"](https://lupyuen.github.io/articles/rust3)
 
 # Rust Custom Target for QEMU RISC-V on Apache NuttX RTOS
+
+Read the article...
+
+- ["Rust Custom Target for QEMU RISC-V on Apache NuttX RTOS"](https://lupyuen.github.io/articles/rust4)
 
 We have a problem compiling [Rust Apps for QEMU RISC-V 32-bit](https://lupyuen.github.io/articles/rust3#software-vs-hardware-floating-point)...
 
