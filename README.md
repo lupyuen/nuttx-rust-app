@@ -418,3 +418,9 @@ $ riscv64-unknown-elf-gcc --target-help
 ```
 
 [(As explained here)](https://gcc.gnu.org/onlinedocs/gcc/RISC-V-Options.html#index-mabi-5)
+
+# TODO
+
+tools/configure.sh rv-virt:nsh64
+
+https://github.com/lupyuen2/wip-nuttx/blob/rust/boards/risc-v/qemu-rv/rv-virt/configs/nsh64/defconfig
