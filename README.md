@@ -421,6 +421,55 @@ $ riscv64-unknown-elf-gcc --target-help
 
 # TODO
 
-tools/configure.sh rv-virt:nsh64
-
 https://github.com/lupyuen2/wip-nuttx/blob/rust/boards/risc-v/qemu-rv/rv-virt/configs/nsh64/defconfig
+
+```bash
+$ tools/configure.sh rv-virt:nsh64
+$ make menuconfig
+## TODO: Enable "Hello Rust" Example App
+$ make --trace
+
+## Compile "hello_main.c" with GCC Compiler
+riscv64-unknown-elf-gcc \
+  -c \
+  -fno-common \
+  -Wall \
+  -Wstrict-prototypes \
+  -Wshadow \
+  -Wundef \
+  -Wno-attributes \
+  -Wno-unknown-pragmas \
+  -Wno-psabi \
+  -Os \
+  -fno-strict-aliasing \
+  -fomit-frame-pointer \
+  -ffunction-sections \
+  -fdata-sections \
+  -g \
+  -mcmodel=medany \
+  -march=rv64imafdc \
+  -mabi=lp64d \
+  -isystem /Users/Luppy/riscv/nuttx/include \
+  -D__NuttX__ \
+  -DNDEBUG  \
+  -pipe \
+  -I "/Users/Luppy/riscv/apps/include" \
+  -Dmain=hello_main  hello_main.c \
+  -o  hello_main.c.Users.Luppy.riscv.apps.examples.hello.o
+
+## Compile "hello_rust_main.rs" with Rust Compiler
+rustc \
+  --edition 2021 \
+  --emit obj \
+  -g \
+  --target riscv64i-unknown-none-elf \
+  -C panic=abort \
+  -O   hello_rust_main.rs \
+  -o  hello_rust_main.rs.Users.Luppy.riscv.apps.examples.hello_rust.o
+
+error: Error loading target specification: Could not find specification for target "riscv64i-unknown-none-elf". Run `rustc --print target-list` for a list of built-in targets
+
+make[2]: *** [/Users/Luppy/riscv/apps/Application.mk:275: hello_rust_main.rs.Users.Luppy.riscv.apps.examples.hello_rust.o] Error 1
+make[1]: *** [Makefile:51: /Users/Luppy/riscv/apps/examples/hello_rust_all] Error 2
+make: *** [tools/LibTargets.mk:232: /Users/Luppy/riscv/apps/libapps.a] Error 2
+```
