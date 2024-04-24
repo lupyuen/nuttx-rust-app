@@ -518,3 +518,55 @@ abcd
 nxtask_exit: hello_rust pid=2,TCB=0x8003fda0
 nsh> 
 ```
+
+# TODO
+
+Ox64
+
+```bash
+10036  tools/configure.sh ox64:nsh
+10037  make menuconfig
+10038  make savedefconfig \\n  && grep -v CONFIG_HOST defconfig \\n  >boards/risc-v/bl808/ox64/configs/nsh/defconfig\n
+10040  make --trace export
+10041  pushd ../apps
+10043  ls examples/hello/*.o
+10045  make --trace import
+
+riscv64-unknown-elf-gcc \
+  -c \
+  -fno-common \
+  -Wall \
+  -Wstrict-prototypes \
+  -Wshadow \
+  -Wundef \
+  -Wno-attributes \
+  -Wno-unknown-pragmas \
+  -Wno-psabi \
+  -fno-common \
+  -pipe  \
+  -Os \
+  -fno-strict-aliasing \
+  -fomit-frame-pointer \
+  -ffunction-sections \
+  -fdata-sections \
+  -g \
+  -mcmodel=medany \
+  -march=rv64imafdc \
+  -mabi=lp64d \
+  -isystem /Users/Luppy/ox64/apps/import/include \
+  -isystem /Users/Luppy/ox64/apps/import/include \
+  -D__NuttX__  \
+  -I "/Users/Luppy/ox64/apps/include"   hello_main.c \
+  -o  hello_main.c.Users.Luppy.ox64.apps.examples.hello.o
+
+Makefile:52: target '/Users/Luppy/ox64/apps/examples/hello_rust_install' does not exist
+make -C /Users/Luppy/ox64/apps/examples/hello_rust install APPDIR="/Users/Luppy/ox64/apps"
+make[3]: Entering directory '/Users/Luppy/ox64/apps/examples/hello_rust'
+make[3]: *** No rule to make target 'hello_rust_main.rs.Users.Luppy.ox64.apps.examples.hello_rust.o', needed by '/Users/Luppy/ox64/apps/bin/hello_rust'.  Stop.
+make[3]: Leaving directory '/Users/Luppy/ox64/apps/examples/hello_rust'
+make[2]: *** [Makefile:52: /Users/Luppy/ox64/apps/examples/hello_rust_install] Error 2
+make[2]: Leaving directory '/Users/Luppy/ox64/apps'
+make[1]: *** [Makefile:78: .import] Error 2
+make[1]: Leaving directory '/Users/Luppy/ox64/apps'
+make: *** [Makefile:84: import] Error 2
+```
