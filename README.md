@@ -632,3 +632,59 @@ nxposix_spawn_exec: ERROR: exec failed: 2
 nsh: hello_rust: command not found
 nsh> 
 ```
+
+TODO: Change:
+
+```rust
+pub extern "C" fn hello_rust_main(_argc: i32, _argv: *const *const u8) -> i32 {
+```
+
+To:
+
+```rust
+pub extern "C" fn main(_argc: i32, _argv: *const *const u8) -> i32 {
+```
+
+TODO: Ox64 Emulator runs OK!
+
+```bash
++ cp /Users/Luppy/riscv/nuttx-tinyemu/docs/quickjs/root-riscv64.cfg .
++ /Users/Luppy/riscv/ox64-tinyemu/temu root-riscv64.cfg
+TinyEMU Emulator for Ox64 BL808 RISC-V SBC
+virtio_console_init
+Patched DCACHE.IALL (Invalidate all Page Table Entries in the D-Cache) at 0x5020099a
+Patched SYNC.S (Ensure that all Cache Operations are completed) at 0x5020099e
+Found ECALL (Start System Timer) at 0x5020bfac
+Patched RDTIME (Read System Time) at 0x5020bfb2
+elf_len=0
+virtio_console_resize_event
+ABCnx_start: Entry
+uart_register: Registering /dev/console
+work_start_lowpri: Starting low-priority kernel worker thread(s)
+nxtask_activate: lpwork pid=1,TCB=0x50409110
+nxtask_activate: AppBringUp pid=2,TCB=0x50409710
+nx_start_application: Starting init task: /system/bin/init
+elf_symname: Symbol has no name
+elf_symvalue: SHN_UNDEF: Failed to get symbol name: -3
+elf_relocateadd: Section 2 reloc 2: Undefined symbol[0] has no name: -3
+nxtask_activate: /system/bin/init pid=3,TCB=0x5040b730
+nxtask_exit: AppBringUp pid=2,TCB=0x50409710
+
+NuttShell (NSH) NuttX-12.4.0-RC0
+nsh> nx_start: CPU0: Beginning Idle Loop
+
+nsh> hello_rust
+posix_spawn: pid=0x80202968 path=hello_rust file_actions=0x80202970 attr=0x80202978 argv=0x80202a18
+elf_symname: Symbol has no name
+elf_symvalue: SHN_UNDEF: Failed to get symbol name: -3
+elf_relocateadd: Section 2 reloc 1: Undefined symbol[0] has no name: -3
+nxtask_activate: hello_rust pid=6,TCB=0x50409790
+Hello, Rust!!
+Hello Ox64!
+You entered...
+Hello Ox64!
+
+nxtask_exit: hello_rust pid=6,TCB=0x50409790
+nsh> 
+```
+
