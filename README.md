@@ -477,7 +477,7 @@ TODO: Change riscv64i to riscv64gc
 
 ```bash
 $ rustup target add riscv64gc-unknown-none-elf
-$ cd ../apps/examples/hello_rust 
+$ pushd ../apps/examples/hello_rust 
 $ rustc \
   --edition 2021 \
   --emit obj \
@@ -486,4 +486,35 @@ $ rustc \
   -C panic=abort \
   -O   hello_rust_main.rs \
   -o  hello_rust_main.rs.Users.Luppy.riscv.apps.examples.hello_rust.o
+$ popd
+$ make
+```
+
+TODO
+
+```bash
+$ qemu-system-riscv64 -semihosting -M virt,aclint=on -cpu rv64 -smp 8 -bios none -kernel nuttx -nographic
+ABCnx_start: Entry
+uart_register: Registering /dev/console
+uart_register: Registering /dev/ttyS0
+nx_start_application: Starting init thread
+task_spawn: name=nsh_main entry=0x8000745c file_actions=0 attr=0x8003d798 argv=0x8003d790
+nxtask_activate: nsh_main pid=1,TCB=0x8003e820
+
+NuttShell (NSH) NuttX-12.4.0-RC0
+nsh> nx_start: CPU0: Beginning Idle Loop
+
+nsh> hello_rust
+posix_spawn: pid=0x8003f734 path=hello_rust file_actions=0x8003f738 attr=0x8003f740 argv=0x8003f838
+nxposix_spawn_exec: ERROR: exec failed: 2
+task_spawn: name=hello_rust entry=0x80018622 file_actions=0x8003f738 attr=0x8003f740 argv=0x8003f840
+spawn_execattrs: Setting policy=2 priority=100 for pid=2
+nxtask_activate: hello_rust pid=2,TCB=0x8003fda0
+Hello, Rust!!
+abcd
+You entered...
+abcd
+
+nxtask_exit: hello_rust pid=2,TCB=0x8003fda0
+nsh> 
 ```
