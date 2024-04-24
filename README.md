@@ -688,3 +688,48 @@ nxtask_exit: hello_rust pid=6,TCB=0x50409790
 nsh> 
 ```
 
+TODO: Works OK on Ox64 BL808 SBC!
+
+https://gist.github.com/lupyuen/7fabbffd16f22914b299ced3723b9b9b
+
+```bash
+Enter choice: 1:.Pine64 0X64 Kernel
+Retrieving file: /extlinux/../Image
+append: root=PARTLABEL=rootfs rootwait rw rootfstype=ext4 console=ttyS0,2000000 loglevel=8 earlyextlinux/../bl808-pine64-ox64.dt## Flattened Device Tree blob at 51ff8000
+   Booting using the fdt blob at 0x51ff8000
+Working  51ff8000
+   Loading Device Tree to 0000000053f22000, end 0000000053f25fab ... OK
+Working FDT set to 53f22000
+
+Starting kernel ...
+
+ABCnx_start: Entry
+uart_register: Registering /dev/console
+work_start_lowpri: Starting low-priority kernel worker thread(s)
+nxtask_activate: lpwork pid=1,TCB=0x50409110
+nxtask_activate: AppBringUp pid=2,TCB=0x50409710
+nx_start_application: Starting init task: /system/bin/init
+elf_symname: Symbol has no name
+elf_symvalue: SHN_UNDEF: Failed to get symbol name: -3
+elf_relocateadd: Section 2 reloc 2: Undefined symbol[0] has no name: -3
+nxtask_activate: /system/bin/init pid=3,TCB=0x5040b730
+nxtask_exit: AppBringUp pid=2,TCB=0x50409710
+
+NuttShell (NSH) NuttX-12.4.0-RC0
+nsh> nx_start: CPU0: Beginning Idle Loop
+
+nsh> 
+nsh> hello_rust
+posix_spawn: pid=0x80202968 path=hello_rust file_actions=0x80202970 attr=0x80202978 argv=0x80202a18
+elf_symname: Symbol has no name
+elf_symvalue: SHN_UNDEF: Failed to get symbol name: -3
+elf_relocateadd: Section 2 reloc 1: Undefined symbol[0] has no name: -3
+nxtask_activate: hello_rust pid=6,TCB=0x50409790
+Hello, Rust!!
+
+You entered...
+
+
+nxtask_exit: hello_rust pid=6,TCB=0x50409790
+nsh> 
+```
