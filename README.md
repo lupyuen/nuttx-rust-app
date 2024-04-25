@@ -421,7 +421,7 @@ $ riscv64-unknown-elf-gcc --target-help
 
 # Rust Apps won't compile for QEMU RISC-V 64-bit
 
-Will Rust Apps run on a 64-bit RISC-V SBC? Let's find out!
+Will Rust Apps run on a 64-bit RISC-V SBC, like Ox64 BL808? Let's find out!
 
 First we test on QEMU RISC-V 64-bit...
 
@@ -495,9 +495,13 @@ So many questions...
 
 Let's fix this!
 
-# TODO
+# Change riscv64i to riscv64gc
 
-TODO: Change riscv64i to riscv64gc
+_Is __`riscv64i`__ the correct target for QEMU?_
+
+Nope [QEMU supports riscv64gc](https://www.qemu.org/docs/master/system/riscv/virt.html#supported-devices)!
+
+For building our Rust App: Let's change riscv64i to riscv64gc...
 
 ```bash
 $ rustup target add riscv64gc-unknown-none-elf
@@ -514,7 +518,9 @@ $ popd
 $ make
 ```
 
-TODO
+TODO: Fix the path of hello_rust.o
+
+And our Rust App runs OK on QEMU RISC-V 64-bit yay!
 
 ```bash
 $ qemu-system-riscv64 -semihosting -M virt,aclint=on -cpu rv64 -smp 8 -bios none -kernel nuttx -nographic
@@ -543,9 +549,9 @@ nxtask_exit: hello_rust pid=2,TCB=0x8003fda0
 nsh> 
 ```
 
-# TODO
+# Rust Apps on Ox64 BL808 SBC
 
-Ox64
+Let's do the same for Ox64 BL808 SBC...
 
 ```bash
 $ tools/configure.sh ox64:nsh
@@ -596,7 +602,7 @@ make[1]: Leaving directory '/Users/Luppy/ox64/apps'
 make: *** [Makefile:84: import] Error 2
 ```
 
-TODO
+Like QEMU, we change riscv64i to riscv64gc...
 
 ```bash
 $ rustup target add riscv64gc-unknown-none-elf
@@ -613,7 +619,9 @@ $ popd
 $ make import
 ```
 
-TODO
+TODO: Fix the path of hello_rust.o
+
+We test it with [Ox64 BL808 Emulator](https://lupyuen.github.io/articles/tinyemu3)...
 
 ```bash
 + riscv64-unknown-elf-objdump --syms --source --reloc --demangle --line-numbers --wide --debugging nuttx
@@ -657,19 +665,23 @@ nsh: hello_rust: command not found
 nsh> 
 ```
 
-TODO: Change:
+[(root-riscv64.cfg is here)](https://github.com/lupyuen/nuttx-ox64/raw/main/nuttx.cfg)
+
+Which fails because the main() function is missing!
+
+So we change this in hello_rust_main.rs...
 
 ```rust
 pub extern "C" fn hello_rust_main(_argc: i32, _argv: *const *const u8) -> i32 {
 ```
 
-To:
+To this...
 
 ```rust
 pub extern "C" fn main(_argc: i32, _argv: *const *const u8) -> i32 {
 ```
 
-TODO: Ox64 Emulator runs OK!
+Now our Rust App runs OK on Ox64 BL808 Emulator!
 
 ```bash
 + cp /Users/Luppy/riscv/nuttx-tinyemu/docs/quickjs/root-riscv64.cfg .
@@ -712,7 +724,9 @@ nxtask_exit: hello_rust pid=6,TCB=0x50409790
 nsh> 
 ```
 
-TODO: Works OK on Ox64 BL808 SBC!
+[(root-riscv64.cfg is here)](https://github.com/lupyuen/nuttx-ox64/raw/main/nuttx.cfg)
+
+Our Rust App also works OK on a real Ox64 BL808 SBC!
 
 https://gist.github.com/lupyuen/7fabbffd16f22914b299ced3723b9b9b
 
