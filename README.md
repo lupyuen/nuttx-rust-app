@@ -419,7 +419,11 @@ $ riscv64-unknown-elf-gcc --target-help
 
 [(As explained here)](https://gcc.gnu.org/onlinedocs/gcc/RISC-V-Options.html#index-mabi-5)
 
-# TODO
+# Rust Apps won't compile for QEMU RISC-V 64-bit
+
+Will Rust Apps run on a 64-bit RISC-V SBC? Let's find out!
+
+First we test on QEMU RISC-V 64-bit...
 
 ```bash
 $ tools/configure.sh rv-virt:nsh64
@@ -472,6 +476,26 @@ make[2]: *** [/Users/Luppy/riscv/apps/Application.mk:275: hello_rust_main.rs.Use
 make[1]: *** [Makefile:51: /Users/Luppy/riscv/apps/examples/hello_rust_all] Error 2
 make: *** [tools/LibTargets.mk:232: /Users/Luppy/riscv/apps/libapps.a] Error 2
 ```
+
+But it fails! Rust Compiler says that __`riscv64i`__ isn't a valid Rust Target for 64-bit RISC-V.
+
+So many questions...
+
+1.  Is __`riscv64i`__ the correct target for QEMU?
+
+    [(__Hint:__ See this)](https://www.qemu.org/docs/master/system/riscv/virt.html#supported-devices)
+
+1.  How should we __Fix the Build__?
+    
+1.  Do we need a __Custom Target__?
+
+    (__Hint:__ Answer is printed above somewhere)
+
+1.  Will it run on [__Ox64 BL808 SBC__](https://www.hackster.io/lupyuen/8-risc-v-sbc-on-a-real-time-operating-system-ox64-nuttx-474358)?
+
+Let's fix this!
+
+# TODO
 
 TODO: Change riscv64i to riscv64gc
 
