@@ -551,6 +551,10 @@ nsh>
 
 # Rust Apps on Ox64 BL808 SBC
 
+![Rust Apps on Apache NuttX RTOS and Ox64 BL808 SBC](https://lupyuen.github.io/images/rust5-title.png)
+
+[_Thanks to cool-retro-term!_](https://github.com/Swordfish90/cool-retro-term)
+
 Let's do the same for Ox64 BL808 SBC...
 
 ```bash
