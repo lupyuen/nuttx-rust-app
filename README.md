@@ -625,7 +625,40 @@ $ make import
 
 TODO: Fix the path of hello_rust.o
 
+Let's test this...
+
+# Change `hello_rust_main` to `main`
+
 We test it with [Ox64 BL808 Emulator](https://lupyuen.github.io/articles/tinyemu3)...
+
+```bash
++ riscv64-unknown-elf-objdump --syms --source --reloc --demangle --line-numbers --wide --debugging nuttx
++ cp /Users/Luppy/riscv/nuttx-tinyemu/docs/quickjs/root-riscv64.cfg .
++ /Users/Luppy/riscv/ox64-tinyemu/temu root-riscv64.cfg
+TinyEMU Emulator for Ox64 BL808 RISC-V SBC
+
+NuttShell (NSH) NuttX-12.4.0-RC0
+nsh> hello_rust
+nsh: hello_rust: command not found
+```
+
+_Huh? Why is hello_rust not found?_
+
+To find out, we [Enable Logging for Binary Loader and Scheduler](https://github.com/lupyuen2/wip-nuttx/commit/dca29d561f44c4749c067b8304dc898b1c6c6e0c)...
+
+```bash
+CONFIG_DEBUG_BINFMT=y
+CONFIG_DEBUG_BINFMT_ERROR=y
+CONFIG_DEBUG_BINFMT_WARN=y
+CONFIG_DEBUG_SCHED=y
+CONFIG_DEBUG_SCHED_ERROR=y
+CONFIG_DEBUG_SCHED_INFO=y
+CONFIG_DEBUG_SCHED_WARN=y
+```
+
+[(root-riscv64.cfg is here)](https://github.com/lupyuen/nuttx-ox64/raw/main/nuttx.cfg)
+
+Now it tells us why it failed...
 
 ```bash
 + riscv64-unknown-elf-objdump --syms --source --reloc --demangle --line-numbers --wide --debugging nuttx
@@ -671,7 +704,7 @@ nsh>
 
 [(root-riscv64.cfg is here)](https://github.com/lupyuen/nuttx-ox64/raw/main/nuttx.cfg)
 
-Which fails because the main() function is missing!
+hello_rust failed to load because the main() function is missing!
 
 So we change this in hello_rust_main.rs...
 
@@ -729,6 +762,8 @@ nsh>
 ```
 
 [(root-riscv64.cfg is here)](https://github.com/lupyuen/nuttx-ox64/raw/main/nuttx.cfg)
+
+# Test Rust Apps on Ox64 BL808 SBC
 
 Our Rust App also works OK on a real Ox64 BL808 SBC!
 
