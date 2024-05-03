@@ -810,3 +810,47 @@ You entered...
 nxtask_exit: hello_rust pid=6,TCB=0x50409790
 nsh> 
 ```
+
+# NuttX Flat Mode vs Kernel Mode
+
+_Why the funny fixes for NuttX Ox64?_
+
+Earlier we saw 2 workarounds for our Ox64 NuttX Build...
+
+- We renamed the __Main Function__
+
+- We fixed the __Makefile Target__
+
+That's because __Ox64 Apps__ are a little more complicated than __QEMU Apps__...
+
+__NuttX QEMU__ runs in __Flat Mode__ (pic below)
+
+- NuttX Apps are __Statically Linked__ into NuttX Kernel
+
+- __Main Functions__ for Apps are named _hello_main()_, _hello_rust_main()_, ...
+
+- __No Memory Protection__ between Apps and Kernel
+
+- Everything runs in __RISC-V Machine Mode__
+
+- A little easier to troubleshoot
+
+![NuttX Flat Mode](https://lupyuen.github.io/images/rust5-flat.jpg)
+
+__NuttX Ox64__ runs in __Kernel Mode__ (pic below)
+
+- NuttX Apps are __Separate ELF Files__
+
+- __Main Functions__ for Apps are all named _main()_
+
+- Apps and Kernel live in __Protected Memory Regions__
+
+- Kernel runs in __RISC-V Supervisor Mode__
+
+- Apps run in __RISC-V User Mode__
+
+- More realistic for Actual Hardware
+
+![NuttX Kernel Mode](https://lupyuen.github.io/images/rust5-kernel.jpg)
+
+That's why our fixes for Ox64 are complicated than QEMU.
