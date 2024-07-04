@@ -80,7 +80,7 @@ jobs:
         riscv-none-elf-gcc -v
 
         ## Configure the build
-        tools/configure.sh rv-virt:knsh64
+        tools/configure.sh rv-virt:nsh64
 
         ## Preserve the build config
         cp .config nuttx.config
