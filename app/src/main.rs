@@ -79,20 +79,20 @@ pub const ULEDIOC_SETALL: i32 = 0x1d03;
 fn hello_rust_main(_argc: i32, _argv: *const *const u8) -> Result<i32, i32> {
     /* "Hello, Rust!!" using printf() from libc */
 
-    new_puts("Hello, Rust!!");
+    safe_puts("Hello, Rust!!");
 
     /* Blink LED 1 using ioctl() from NuttX */
 
-    new_puts("Opening /dev/userleds");
-    let fd = new_open(b"/dev/userleds\0" as *const u8, O_WRONLY)?;
-    new_puts("Set LED 1 to 1");
+    safe_puts("Opening /dev/userleds");
+    let fd = safe_open(b"/dev/userleds\0" as *const u8, O_WRONLY)?;
+    safe_puts("Set LED 1 to 1");
     
-    new_ioctl(fd, ULEDIOC_SETALL, 1)?;
-    new_puts("Sleeping...");
+    safe_ioctl(fd, ULEDIOC_SETALL, 1)?;
+    safe_puts("Sleeping...");
     unsafe { usleep(500_000); }
 
-    new_puts("Set LED 1 to 0");
-    new_ioctl(fd, ULEDIOC_SETALL, 0)?;
+    safe_puts("Set LED 1 to 0");
+    safe_ioctl(fd, ULEDIOC_SETALL, 0)?;
     unsafe { close(fd); }
 
     /* Exit with status 0 */
@@ -145,7 +145,7 @@ pub extern "C" fn old_hello_rust_main(_argc: i32, _argv: *const *const u8) -> i3
 }
 
 // Safer Version of open()
-pub fn new_open(_path: *const u8, _oflag: i32) -> Result<i32, i32> {
+pub fn safe_open(_path: *const u8, _oflag: i32) -> Result<i32, i32> {
     // TODO: Call open()
     println!("TODO: Call open()");
 
@@ -157,7 +157,7 @@ pub fn new_open(_path: *const u8, _oflag: i32) -> Result<i32, i32> {
 }
 
 // Safer Version of ioctl()
-pub fn new_ioctl(_fd: i32, _request: i32, _arg: i32) -> Result<i32, i32> {
+pub fn safe_ioctl(_fd: i32, _request: i32, _arg: i32) -> Result<i32, i32> {
     // TODO: Call ioctl()
     println!("TODO: Call ioctl()");
 
@@ -169,7 +169,7 @@ pub fn new_ioctl(_fd: i32, _request: i32, _arg: i32) -> Result<i32, i32> {
 }
 
 // Safer Version of puts()
-pub fn new_puts(s: &str) {
+pub fn safe_puts(s: &str) {
     // TODO: Call puts()
     println!("{}", s);
 }
