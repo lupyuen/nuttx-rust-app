@@ -117,7 +117,52 @@ pub extern "C" fn hello_rust_main(_argc: i32, _argv: *const *const u8) -> i32 {
     0
 }
 
+// TODO: Remove this function
+#[no_mangle]
+pub extern "C" fn old_hello_rust_main(_argc: i32, _argv: *const *const u8) -> i32 {
+    unsafe {
+        /* "Hello, Rust!!" using printf() from libc */
+
+        printf(b"Old Hello, Rust!!\n\0" as *const u8);
+
+        /* Blink LED 1 using ioctl() from NuttX */
+
+        printf(b"Opening /dev/userleds\n\0" as *const u8);
+        let fd = open(b"/dev/userleds\0" as *const u8, O_WRONLY);
+        if fd < 0 {
+            printf(b"Unable to open /dev/userleds, skipping the blinking\n\0" as *const u8);
+            return 1;
+        }
+
+        printf(b"Set LED 1 to 1\n\0" as *const u8);
+        let ret = ioctl(fd, ULEDIOC_SETALL, 1);
+        if ret < 0 {
+            printf(b"ERROR: ioctl(ULEDIOC_SETALL) failed\n\0" as *const u8);
+            close(fd);
+            return 1;
+        }
+
+        printf(b"Sleeping...\n\0" as *const u8);
+        usleep(500_000);
+
+        printf(b"Set LED 1 to 0\n\0" as *const u8);
+        let ret = ioctl(fd, ULEDIOC_SETALL, 0);
+        if ret < 0 {
+            printf(b"ERROR: ioctl(ULEDIOC_SETALL) failed\n\0" as *const u8);
+            close(fd);
+            return 1;
+        }
+
+        close(fd);
+    }
+
+    /* Exit with status 0 */
+
+    0
+}
+
 // TODO: Remove the Main Function
 fn main() {
-    println!("Hello, world!");
+    old_hello_rust_main(0, std::ptr::null());
+    hello_rust_main(0, std::ptr::null());
 }
