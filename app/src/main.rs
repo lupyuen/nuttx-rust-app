@@ -22,14 +22,14 @@
  * Attributes
  ****************************************************************************/
 
-#![no_main]
-#![no_std]
+// #![no_main]
+// #![no_std]
 
 /****************************************************************************
  * Uses
  ****************************************************************************/
 
-use core::panic::PanicInfo;
+// use core::panic::PanicInfo;
 
 /****************************************************************************
  * Externs
@@ -58,10 +58,10 @@ pub const ULEDIOC_SETALL: i32 = 0x1d03;
  * Panic Handler (needed for [no_std] compilation)
  ****************************************************************************/
 
-#[panic_handler]
-fn panic(_panic: &PanicInfo<'_>) -> ! {
-    loop {}
-}
+// #[panic_handler]
+// fn panic(_panic: &PanicInfo<'_>) -> ! {
+//     loop {}
+// }
 
 /****************************************************************************
  * Public Functions
@@ -112,4 +112,9 @@ pub extern "C" fn hello_rust_main(_argc: i32, _argv: *const *const u8) -> i32 {
     /* Exit with status 0 */
 
     0
+}
+
+// TODO: Remove the Main Function
+fn main() {
+    println!("Hello, world!");
 }
