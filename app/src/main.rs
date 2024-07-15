@@ -22,6 +22,7 @@
  * Attributes
  ****************************************************************************/
 
+// TODO: Uncomment this
 // #![no_main]
 // #![no_std]
 
@@ -29,6 +30,7 @@
  * Uses
  ****************************************************************************/
 
+// TODO: Uncomment this
 // use core::panic::PanicInfo;
 
 /****************************************************************************
@@ -58,6 +60,7 @@ pub const ULEDIOC_SETALL: i32 = 0x1d03;
  * Panic Handler (needed for [no_std] compilation)
  ****************************************************************************/
 
+// TODO: Uncomment this
 // #[panic_handler]
 // fn panic(_panic: &PanicInfo<'_>) -> ! {
 //     loop {}
