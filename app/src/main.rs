@@ -74,8 +74,9 @@ pub const ULEDIOC_SETALL: i32 = 0x1d03;
  * hello_rust_main
  ****************************************************************************/
 
+ // TODO: Rename this function
 #[no_mangle]
-pub extern "C" fn hello_rust_main(_argc: i32, _argv: *const *const u8) -> Result<i32, i32> {
+fn hello_rust_main(_argc: i32, _argv: *const *const u8) -> Result<i32, i32> {
     /* "Hello, Rust!!" using printf() from libc */
 
     new_puts("Hello, Rust!!");
@@ -147,14 +148,24 @@ pub extern "C" fn old_hello_rust_main(_argc: i32, _argv: *const *const u8) -> i3
 pub fn new_open(_path: *const u8, _oflag: i32) -> Result<i32, i32> {
     // TODO: Call open()
     println!("TODO: Call open()");
+
+    // Return successfully with a File Descriptor
     Ok(1)
+
+    // Or return an error code
+    // Err(-1)  
 }
 
 // Safer Version of ioctl()
 pub fn new_ioctl(_fd: i32, _request: i32, _arg: i32) -> Result<i32, i32> {
     // TODO: Call ioctl()
     println!("TODO: Call ioctl()");
+
+    // Return successfully with the ioctl() result
     Ok(0)
+
+    // Or return an error code
+    // Err(-1)
 }
 
 // Safer Version of puts()
@@ -163,11 +174,17 @@ pub fn new_puts(s: &str) {
     println!("{}", s);
 }
 
-// TODO: Remove the Main Function
+// TODO: Rename the Main Function to hello_rust_main
 fn main() {
     // Call the Old Version of Rust Main
-    old_hello_rust_main(0, std::ptr::null());
+    // old_hello_rust_main(0, std::ptr::null());
 
     // Call the New Version of Rust Main
-    _ = hello_rust_main(0, std::ptr::null());
+    let res = hello_rust_main(0, std::ptr::null());
+
+    // If Rust Main returns an error, print it
+    if let Err(e) = res {
+        // TODO: Call printf()
+        println!("ERROR: Failed with error {}", e);
+    }
 }
