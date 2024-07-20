@@ -43,6 +43,7 @@ extern "C" {
     pub fn close(fd: i32) -> i32;
     pub fn ioctl(fd: i32, request: i32, ...) -> i32;
     pub fn usleep(usec: u32) -> u32;
+    pub fn puts(s: *const u8) -> i32;
 }
 
 /****************************************************************************
@@ -147,7 +148,19 @@ pub extern "C" fn old_hello_rust_main(_argc: i32, _argv: *const *const u8) -> i3
 // Safer Version of open()
 pub fn safe_open(_path: *const u8, _oflag: i32) -> Result<i32, i32> {
     // TODO: Call open()
-    println!("TODO: Call open()");
+    // println!("TODO: Call open()");
+    
+    let fd;
+    unsafe {
+        fd = open(b"/dev/userleds\0" as *const u8, O_WRONLY);
+    }
+    if fd<0 {
+        println!("Unable to open /dev/userleds, skipping the blinking");
+        // Err(fd)
+    } else {
+        println!("Opened /dev/userleds successfully");
+        // Ok(fd)
+    }
 
     // Return successfully with a File Descriptor
     Ok(1)
@@ -159,7 +172,19 @@ pub fn safe_open(_path: *const u8, _oflag: i32) -> Result<i32, i32> {
 // Safer Version of ioctl()
 pub fn safe_ioctl(_fd: i32, _request: i32, _arg: i32) -> Result<i32, i32> {
     // TODO: Call ioctl()
-    println!("TODO: Call ioctl()");
+    // println!("TODO: Call ioctl()");
+
+    let ret;
+    unsafe {
+        ret = ioctl(_fd, ULEDIOC_SETALL, 1);
+    }
+    if ret<0 {
+        println!("ERROR: ioctl(ULEDIOC_SETALL) failed!");
+        // Err(ret)
+    } else {
+        println!("SUCCESS: ioctl(ULEDIOC_SETALL) completed!");
+        // Ok(ret)
+    }
 
     // Return successfully with the ioctl() result
     Ok(0)
@@ -171,7 +196,13 @@ pub fn safe_ioctl(_fd: i32, _request: i32, _arg: i32) -> Result<i32, i32> {
 // Safer Version of puts()
 pub fn safe_puts(s: &str) {
     // TODO: Call puts()
-    println!("{}", s);
+    let mut str_c = s.to_owned();
+    str_c.push('\n');
+    let c_str = str_c.as_bytes();
+    unsafe {
+        puts(c_str.as_ptr());
+    }
+    // println!("{}", s);
 }
 
 // TODO: Rename the Main Function to hello_rust_main
