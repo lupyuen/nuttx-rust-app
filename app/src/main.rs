@@ -127,51 +127,35 @@ pub extern "C" fn old_hello_rust_main(_argc: i32, _argv: *const *const u8) -> i3
 }
 
 // TODO: Move to module nuttx: Safer Version of open()
-pub fn safe_open(_path: *const u8, _oflag: i32) -> Result<i32, i32> {
-    // TODO: Just return the fd as Err or OK
-    // TODO: Pass _path and _oflag to open()
+pub fn safe_open(path: *const u8, oflag: i32) -> Result<i32, i32> {
     // TODO: Handle _path safely. Allocate a byte array, copy the bytes over, terminate with null
     // Similar to this: https://github.com/lupyuen2/wip-nuttx-apps/blob/rust/examples/hello_rust/hello_rust_main.rs#L81
     let fd;
     unsafe {
-        fd = nuttx::open(b"/dev/userleds\0" as *const u8, nuttx::O_WRONLY);
+        fd = nuttx::open(path, oflag);
     }
     if fd<0 {
         println!("Unable to open /dev/userleds, skipping the blinking");
-        // Err(fd)
+        Err(fd)
     } else {
         println!("Opened /dev/userleds successfully");
-        // Ok(fd)
+        Ok(fd)
     }
-
-    // Return successfully with a File Descriptor
-    Ok(1)
-
-    // Or return an error code
-    // Err(-1)  
 }
 
 // TODO: Move to module nuttx: Safer Version of ioctl()
-pub fn safe_ioctl(_fd: i32, _request: i32, _arg: i32) -> Result<i32, i32> {
-    // TODO: Just return the ret as Err or OK
-    // TODO: Pas _request and _arg to ioctl()
+pub fn safe_ioctl(fd: i32, request: i32, arg: i32) -> Result<i32, i32> {
     let ret;
     unsafe {
-        ret = nuttx::ioctl(_fd, nuttx::ULEDIOC_SETALL, 1);
+        ret = nuttx::ioctl(fd, request, arg);
     }
     if ret<0 {
         println!("ERROR: ioctl(ULEDIOC_SETALL) failed!");
-        // Err(ret)
+        Err(ret)
     } else {
         println!("SUCCESS: ioctl(ULEDIOC_SETALL) completed!");
-        // Ok(ret)
+        Ok(ret)
     }
-
-    // Return successfully with the ioctl() result
-    Ok(0)
-
-    // Or return an error code
-    // Err(-1)
 }
 
 // TODO: Move to module nuttx: Safer Version of puts()
