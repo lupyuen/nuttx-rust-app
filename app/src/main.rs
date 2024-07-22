@@ -32,26 +32,7 @@
 
 // TODO: Uncomment this
 // use core::panic::PanicInfo;
-
-/****************************************************************************
- * Externs
- ****************************************************************************/
-
-extern "C" {
-    pub fn printf(format: *const u8, ...) -> i32;
-    pub fn open(path: *const u8, oflag: i32, ...) -> i32;
-    pub fn close(fd: i32) -> i32;
-    pub fn ioctl(fd: i32, request: i32, ...) -> i32;
-    pub fn usleep(usec: u32) -> u32;
-    pub fn puts(s: *const u8) -> i32;
-}
-
-/****************************************************************************
- * Constants
- ****************************************************************************/
-
-pub const O_WRONLY: i32 = 1 << 1;
-pub const ULEDIOC_SETALL: i32 = 0x1d03;
+mod nuttx;
 
 /****************************************************************************
  * Private Functions
@@ -80,21 +61,21 @@ pub const ULEDIOC_SETALL: i32 = 0x1d03;
 fn hello_rust_main(_argc: i32, _argv: *const *const u8) -> Result<i32, i32> {
     /* "Hello, Rust!!" using printf() from libc */
 
-    safe_puts("Hello, Rust!!");
+    safe_puts("Hello, Rust!!");  // TODO: nuttx::safe_puts
 
     /* Blink LED 1 using ioctl() from NuttX */
 
     safe_puts("Opening /dev/userleds");
-    let fd = safe_open(b"/dev/userleds\0" as *const u8, O_WRONLY)?;
+    let fd = safe_open(b"/dev/userleds\0" as *const u8, nuttx::O_WRONLY)?;  // TODO: nuttx::safe_open
     safe_puts("Set LED 1 to 1");
     
-    safe_ioctl(fd, ULEDIOC_SETALL, 1)?;
+    safe_ioctl(fd, nuttx::ULEDIOC_SETALL, 1)?;  // TODO: nuttx::safe_ioctl
     safe_puts("Sleeping...");
-    unsafe { usleep(500_000); }
+    unsafe { nuttx::usleep(500_000); }
 
     safe_puts("Set LED 1 to 0");
-    safe_ioctl(fd, ULEDIOC_SETALL, 0)?;
-    unsafe { close(fd); }
+    safe_ioctl(fd, nuttx::ULEDIOC_SETALL, 0)?;
+    unsafe { nuttx::close(fd); }
 
     /* Exit with status 0 */
 
@@ -107,37 +88,37 @@ pub extern "C" fn old_hello_rust_main(_argc: i32, _argv: *const *const u8) -> i3
     unsafe {
         /* "Hello, Rust!!" using printf() from libc */
 
-        printf(b"Old Hello, Rust!!\n\0" as *const u8);
+        nuttx::printf(b"Old Hello, Rust!!\n\0" as *const u8);
 
         /* Blink LED 1 using ioctl() from NuttX */
 
-        printf(b"Opening /dev/userleds\n\0" as *const u8);
-        let fd = open(b"/dev/userleds\0" as *const u8, O_WRONLY);
+        nuttx::printf(b"Opening /dev/userleds\n\0" as *const u8);
+        let fd = nuttx::open(b"/dev/userleds\0" as *const u8, nuttx::O_WRONLY);
         if fd < 0 {
-            printf(b"Unable to open /dev/userleds, skipping the blinking\n\0" as *const u8);
+            nuttx::printf(b"Unable to open /dev/userleds, skipping the blinking\n\0" as *const u8);
             return 1;
         }
 
-        printf(b"Set LED 1 to 1\n\0" as *const u8);
-        let ret = ioctl(fd, ULEDIOC_SETALL, 1);
+        nuttx::printf(b"Set LED 1 to 1\n\0" as *const u8);
+        let ret = nuttx::ioctl(fd, nuttx::ULEDIOC_SETALL, 1);
         if ret < 0 {
-            printf(b"ERROR: ioctl(ULEDIOC_SETALL) failed\n\0" as *const u8);
-            close(fd);
+            nuttx::printf(b"ERROR: ioctl(ULEDIOC_SETALL) failed\n\0" as *const u8);
+            nuttx::close(fd);
             return 1;
         }
 
-        printf(b"Sleeping...\n\0" as *const u8);
-        usleep(500_000);
+        nuttx::printf(b"Sleeping...\n\0" as *const u8);
+        nuttx::usleep(500_000);
 
-        printf(b"Set LED 1 to 0\n\0" as *const u8);
-        let ret = ioctl(fd, ULEDIOC_SETALL, 0);
+        nuttx::printf(b"Set LED 1 to 0\n\0" as *const u8);
+        let ret = nuttx::ioctl(fd, nuttx::ULEDIOC_SETALL, 0);
         if ret < 0 {
-            printf(b"ERROR: ioctl(ULEDIOC_SETALL) failed\n\0" as *const u8);
-            close(fd);
+            nuttx::printf(b"ERROR: ioctl(ULEDIOC_SETALL) failed\n\0" as *const u8);
+            nuttx::close(fd);
             return 1;
         }
 
-        close(fd);
+        nuttx::close(fd);
     }
 
     /* Exit with status 0 */
@@ -145,14 +126,14 @@ pub extern "C" fn old_hello_rust_main(_argc: i32, _argv: *const *const u8) -> i3
     0
 }
 
-// Safer Version of open()
+// TODO: Move to module nuttx: Safer Version of open()
 pub fn safe_open(_path: *const u8, _oflag: i32) -> Result<i32, i32> {
     // TODO: Just return the fd as Err or OK
     // TODO: Pass _path and _oflag to open()
     // TODO: Handle _path safely. Allocate a byte array, copy the bytes over, terminate with null
     let fd;
     unsafe {
-        fd = open(b"/dev/userleds\0" as *const u8, O_WRONLY);
+        fd = nuttx::open(b"/dev/userleds\0" as *const u8, nuttx::O_WRONLY);
     }
     if fd<0 {
         println!("Unable to open /dev/userleds, skipping the blinking");
@@ -169,13 +150,13 @@ pub fn safe_open(_path: *const u8, _oflag: i32) -> Result<i32, i32> {
     // Err(-1)  
 }
 
-// Safer Version of ioctl()
+// TODO: Move to module nuttx: Safer Version of ioctl()
 pub fn safe_ioctl(_fd: i32, _request: i32, _arg: i32) -> Result<i32, i32> {
     // TODO: Just return the ret as Err or OK
     // TODO: Pas _request and _arg to ioctl()
     let ret;
     unsafe {
-        ret = ioctl(_fd, ULEDIOC_SETALL, 1);
+        ret = nuttx::ioctl(_fd, nuttx::ULEDIOC_SETALL, 1);
     }
     if ret<0 {
         println!("ERROR: ioctl(ULEDIOC_SETALL) failed!");
@@ -192,7 +173,7 @@ pub fn safe_ioctl(_fd: i32, _request: i32, _arg: i32) -> Result<i32, i32> {
     // Err(-1)
 }
 
-// Safer Version of puts()
+// TODO: Move to module nuttx: Safer Version of puts()
 pub fn safe_puts(s: &str) {
     // TODO: to_owned() requires String from Rust Standard Library, won't work with Rust Core Library
     // Need to allocate a byte array, copy the bytes over, terminate with null
@@ -200,7 +181,7 @@ pub fn safe_puts(s: &str) {
     str_c.push('\n');
     let c_str = str_c.as_bytes();
     unsafe {
-        puts(c_str.as_ptr());
+        nuttx::puts(c_str.as_ptr());
     }
     // println!("{}", s);
 }
