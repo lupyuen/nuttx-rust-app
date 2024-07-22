@@ -147,9 +147,9 @@ pub extern "C" fn old_hello_rust_main(_argc: i32, _argv: *const *const u8) -> i3
 
 // Safer Version of open()
 pub fn safe_open(_path: *const u8, _oflag: i32) -> Result<i32, i32> {
-    // TODO: Call open()
-    // println!("TODO: Call open()");
-    
+    // TODO: Just return the fd as Err or OK
+    // TODO: Pass _path and _oflag to open()
+    // TODO: Handle _path safely. Allocate a byte array, copy the bytes over, terminate with null
     let fd;
     unsafe {
         fd = open(b"/dev/userleds\0" as *const u8, O_WRONLY);
@@ -171,9 +171,8 @@ pub fn safe_open(_path: *const u8, _oflag: i32) -> Result<i32, i32> {
 
 // Safer Version of ioctl()
 pub fn safe_ioctl(_fd: i32, _request: i32, _arg: i32) -> Result<i32, i32> {
-    // TODO: Call ioctl()
-    // println!("TODO: Call ioctl()");
-
+    // TODO: Just return the ret as Err or OK
+    // TODO: Pas _request and _arg to ioctl()
     let ret;
     unsafe {
         ret = ioctl(_fd, ULEDIOC_SETALL, 1);
@@ -195,7 +194,8 @@ pub fn safe_ioctl(_fd: i32, _request: i32, _arg: i32) -> Result<i32, i32> {
 
 // Safer Version of puts()
 pub fn safe_puts(s: &str) {
-    // TODO: Call puts()
+    // TODO: to_owned() requires String from Rust Standard Library, won't work with Rust Core Library
+    // Need to allocate a byte array, copy the bytes over, terminate with null
     let mut str_c = s.to_owned();
     str_c.push('\n');
     let c_str = str_c.as_bytes();
