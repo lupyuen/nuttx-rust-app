@@ -131,6 +131,7 @@ pub fn safe_open(_path: *const u8, _oflag: i32) -> Result<i32, i32> {
     // TODO: Just return the fd as Err or OK
     // TODO: Pass _path and _oflag to open()
     // TODO: Handle _path safely. Allocate a byte array, copy the bytes over, terminate with null
+    // Similar to this: https://github.com/lupyuen2/wip-nuttx-apps/blob/rust/examples/hello_rust/hello_rust_main.rs#L81
     let fd;
     unsafe {
         fd = nuttx::open(b"/dev/userleds\0" as *const u8, nuttx::O_WRONLY);
@@ -177,6 +178,7 @@ pub fn safe_ioctl(_fd: i32, _request: i32, _arg: i32) -> Result<i32, i32> {
 pub fn safe_puts(s: &str) {
     // TODO: to_owned() requires String from Rust Standard Library, won't work with Rust Core Library
     // Need to allocate a byte array, copy the bytes over, terminate with null
+    // Similar to this: https://github.com/lupyuen2/wip-nuttx-apps/blob/rust/examples/hello_rust/hello_rust_main.rs#L81
     let mut str_c = s.to_owned();
     str_c.push('\n');
     let c_str = str_c.as_bytes();
