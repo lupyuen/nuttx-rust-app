@@ -22,26 +22,38 @@ pub const ULEDIOC_SETALL: i32 = 0x1d03;
  * Public Functions
  ****************************************************************************/
 
-/*
-// TODO: Move here: Safer Version of open()
-pub fn safe_open(_path: *const u8, _oflag: i32) -> Result<i32, i32> {
-    // Return successfully with a File Descriptor
-    Ok(1)
-
-    // Or return an error code
-    // Err(-1)  
+pub fn safe_open(path: *const u8, oflag: i32) -> Result<i32, i32> {
+    let fd;
+    unsafe {
+        fd = open(path, oflag);
+    }
+    // TODO: Commet below Ok, and Uncomment if-else block
+    Ok(fd)
+    // if fd<0 {
+    //     // println!("Unable to open /dev/userleds, skipping the blinking");
+    //     Err(fd)
+    // } else {
+    //     // println!("Opened /dev/userleds successfully");
+    //     Ok(fd)
+    // }
 }
 
-// TODO: Move here: Safer Version of ioctl()
-pub fn safe_ioctl(_fd: i32, _request: i32, _arg: i32) -> Result<i32, i32> {
-    // Return successfully with the ioctl() result
-    Ok(0)
-
-    // Or return an error code
-    // Err(-1)
+pub fn safe_ioctl(fd: i32, request: i32, arg: i32) -> Result<i32, i32> {
+    let ret;
+    unsafe {
+        ret = ioctl(fd, request, arg);
+    }
+    // TODO: Commet below Ok, and Uncomment if-else block
+    Ok(ret)
+    // if ret<0 {
+    //     // println!("ERROR: ioctl(ULEDIOC_SETALL) failed!");
+    //     Err(ret)
+    // } else {
+    //     // println!("SUCCESS: ioctl(ULEDIOC_SETALL) completed!");
+    //     Ok(ret)
+    // }
 }
 
 // TODO: Move here: Safer Version of puts()
-pub fn safe_puts(s: &str) {
-} 
-*/
+// pub fn safe_puts(s: &str) {
+// }

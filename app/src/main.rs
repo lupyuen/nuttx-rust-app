@@ -130,31 +130,33 @@ pub extern "C" fn old_hello_rust_main(_argc: i32, _argv: *const *const u8) -> i3
 pub fn safe_open(path: *const u8, oflag: i32) -> Result<i32, i32> {
     // TODO: Handle _path safely. Allocate a byte array, copy the bytes over, terminate with null
     // Similar to this: https://github.com/lupyuen2/wip-nuttx-apps/blob/rust/examples/hello_rust/hello_rust_main.rs#L81
-    let fd;
-    unsafe {
-        fd = nuttx::open(path, oflag);
-    }
-    if fd<0 {
-        println!("Unable to open /dev/userleds, skipping the blinking");
-        Err(fd)
-    } else {
-        println!("Opened /dev/userleds successfully");
-        Ok(fd)
+    let result = nuttx::safe_open(path, oflag);
+
+    match result {
+        Ok(fd) => {
+            println!("Opened /dev/userleds successfully");
+            Ok(fd)
+        },
+        Err(e) => {
+            println!("Unable to open /dev/userleds, skipping the blinking");
+            Err(e)
+        }
     }
 }
 
 // TODO: Move to module nuttx: Safer Version of ioctl()
 pub fn safe_ioctl(fd: i32, request: i32, arg: i32) -> Result<i32, i32> {
-    let ret;
-    unsafe {
-        ret = nuttx::ioctl(fd, request, arg);
-    }
-    if ret<0 {
-        println!("ERROR: ioctl(ULEDIOC_SETALL) failed!");
-        Err(ret)
-    } else {
-        println!("SUCCESS: ioctl(ULEDIOC_SETALL) completed!");
-        Ok(ret)
+    let result = nuttx::safe_ioctl(fd, request, arg);
+
+    match result {
+        Ok(ret) => {
+            println!("SUCCESS: ioctl(ULEDIOC_SETALL) completed!");
+            Ok(ret)
+        },
+        Err(e) => {
+            println!("ERROR: ioctl(ULEDIOC_SETALL) failed!");
+            Err(e)
+        }
     }
 }
 
