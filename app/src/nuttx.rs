@@ -22,10 +22,17 @@ pub const ULEDIOC_SETALL: i32 = 0x1d03;
  * Public Functions
  ****************************************************************************/
 
-pub fn safe_open(path: *const u8, oflag: i32) -> Result<i32, i32> {
+pub fn safe_open(path: &str, oflag: i32) -> Result<i32, i32> {
+
+    let byte_str = path.as_bytes();
+    let mut buffer = [0u8; 256];
+    let len = byte_str.len().min(buffer.len() - 1); // Memory rquired for and null terminator
+    buffer[..len].copy_from_slice(&byte_str[..len]);
+    buffer[len] = 0;
+
     let fd;
     unsafe {
-        fd = open(path, oflag);
+        fd = open(buffer.as_ptr(), oflag);
     }
     // TODO: Commet below Ok, and Uncomment if-else block
     Ok(fd)

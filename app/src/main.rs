@@ -66,7 +66,7 @@ fn hello_rust_main(_argc: i32, _argv: *const *const u8) -> Result<i32, i32> {
     /* Blink LED 1 using ioctl() from NuttX */
 
     safe_puts("Opening /dev/userleds");
-    let fd = safe_open(b"/dev/userleds\0" as *const u8, nuttx::O_WRONLY)?;  // TODO: nuttx::safe_open
+    let fd = safe_open("/dev/userleds", nuttx::O_WRONLY)?;  // TODO: nuttx::safe_open
     safe_puts("Set LED 1 to 1");
     
     safe_ioctl(fd, nuttx::ULEDIOC_SETALL, 1)?;  // TODO: nuttx::safe_ioctl
@@ -127,9 +127,10 @@ fn hello_rust_main(_argc: i32, _argv: *const *const u8) -> Result<i32, i32> {
 // }
 
 // TODO: Move to module nuttx: Safer Version of open()
-pub fn safe_open(path: *const u8, oflag: i32) -> Result<i32, i32> {
+pub fn safe_open(path: &str, oflag: i32) -> Result<i32, i32> {
     // TODO: Handle _path safely. Allocate a byte array, copy the bytes over, terminate with null
     // Similar to this: https://github.com/lupyuen2/wip-nuttx-apps/blob/rust/examples/hello_rust/hello_rust_main.rs#L81
+    
     let result = nuttx::safe_open(path, oflag);
 
     match result {
