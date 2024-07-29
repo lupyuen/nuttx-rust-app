@@ -2,10 +2,7 @@
  * Uses
  ****************************************************************************/
 
-use core::{
-    cmp::Ord,
-    result::Result::{self, Err, Ok},
-};
+use core::result::Result::{self, Err, Ok};
 
 /****************************************************************************
  * Externs
@@ -34,17 +31,18 @@ pub const ULEDIOC_SETALL: i32 = 0x1d03;
  * Private Functions
  ****************************************************************************/
 
-/* Copy the Rust Str to the Byte Buffer */
+/* Copy the Rust Str to the Byte Buffer and terminate with null */
 
-fn copy_to_buffer(s: &str, buffer: &mut [u8]) -> Result<(), i32> {
+fn copy_to_buffer(s: &str, buffer: &mut [u8]) -> Result<(), ()> {
     let byte_str = s.as_bytes();
-    if byte_str.len() >= buffer.len() {
-        return Err(-1);
+    let len = byte_str.len();
+    if len >= buffer.len() {
+        Err(())
+    } else {
+        buffer[..len].copy_from_slice(&byte_str[..len]);
+        buffer[len] = 0;
+        Ok(())
     }
-    let len = byte_str.len().min(buffer.len() - 1);
-    buffer[..len].copy_from_slice(&byte_str[..len]);
-    buffer[len] = 0;
-    Ok(())
 }
 
 /****************************************************************************
