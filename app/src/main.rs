@@ -32,8 +32,10 @@
  ****************************************************************************/
 
 #[cfg(target_os = "none")]
-use core::panic::PanicInfo;
-use core::result::Result::{self, Err, Ok};
+use core::{
+    panic::PanicInfo,
+    result::Result::{self, Err, Ok},
+};
 
 /****************************************************************************
  * Modules
@@ -60,7 +62,7 @@ fn panic(_panic: &PanicInfo<'_>) -> ! {
  ****************************************************************************/
 
 fn rust_main(_argc: i32, _argv: *const *const u8) -> Result<i32, i32> {
-    /* "Hello, Rust!!" using printf() from libc */
+    /* "Hello, Rust!!" using puts() from libc */
 
     nuttx::safe_puts("Hello, Rust!!");
 
@@ -97,7 +99,7 @@ fn rust_main(_argc: i32, _argv: *const *const u8) -> Result<i32, i32> {
 
 #[no_mangle]
 pub extern "C" fn hello_rust_main(_argc: i32, _argv: *const *const u8) -> i32 {
-    /* Call the New Version of Rust Main */
+    /* Call the program logic in Rust Main */
 
     let res = rust_main(0, core::ptr::null());
 
