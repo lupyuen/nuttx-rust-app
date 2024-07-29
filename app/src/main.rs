@@ -22,22 +22,24 @@
  * Attributes
  ****************************************************************************/
 
-// TODO: Uncomment this
-// #![no_main]
-// #![no_std]
+/* Comment this lines for testing with Rust Standard Library */
+
+#![no_main]
+#![no_std]
 
 /****************************************************************************
  * Uses
  ****************************************************************************/
 
-// TODO: Uncomment this
-// use core::panic::PanicInfo;
+#[cfg(target_os = "none")]
+use core::panic::PanicInfo;
+use core::result::Result::{self, Err, Ok};
 
 /****************************************************************************
  * Modules
  ****************************************************************************/
 
- mod nuttx;
+mod nuttx;
 
 /****************************************************************************
  * Private Functions
@@ -47,11 +49,11 @@
  * Panic Handler (needed for [no_std] compilation)
  ****************************************************************************/
 
-// TODO: Uncomment this
-// #[panic_handler]
-// fn panic(_panic: &PanicInfo<'_>) -> ! {
-//     loop {}
-// }
+#[cfg(target_os = "none")]
+#[panic_handler]
+fn panic(_panic: &PanicInfo<'_>) -> ! {
+    loop {}
+}
 
 /****************************************************************************
  * Public Functions
@@ -88,11 +90,8 @@ fn hello_rust_main(_argc: i32, _argv: *const *const u8) -> Result<i32, i32> {
 
 // TODO: Rename the Main Function to hello_rust_main
 fn main() {
-    // Call the Old Version of Rust Main
-    // old_hello_rust_main(0, std::ptr::null());
-
     // Call the New Version of Rust Main
-    let res = hello_rust_main(0, std::ptr::null());
+    let res = hello_rust_main(0, core::ptr::null());
 
     // If Rust Main returns an error, print it
     if let Err(e) = res {
