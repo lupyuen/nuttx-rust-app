@@ -3,6 +3,7 @@
  ****************************************************************************/
 
  extern "C" {
+    pub fn printf(format: *const u8, ...) -> i32;
     pub fn open(path: *const u8, oflag: i32, ...) -> i32;
     pub fn close(fd: i32) -> i32;
     pub fn ioctl(fd: i32, request: i32, ...) -> i32;

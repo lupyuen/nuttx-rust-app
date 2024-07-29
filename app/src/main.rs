@@ -96,7 +96,6 @@ fn main() {
 
     // If Rust Main returns an error, print it
     if let Err(e) = res {
-        // TODO: Call printf()
-        println!("ERROR: Failed with error {}", e);
+        unsafe { nuttx::printf(b"ERROR: Failed with error %d\n\0" as *const u8, e); }
     }
 }
