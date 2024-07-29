@@ -22,7 +22,7 @@
  * Attributes
  ****************************************************************************/
 
-/* Comment this lines for testing with Rust Standard Library */
+/* Comment these lines for testing with Rust Standard Library */
 
 #![no_main]
 #![no_std]
@@ -49,10 +49,42 @@ mod nuttx;
  * Panic Handler (needed for [no_std] compilation)
  ****************************************************************************/
 
-#[cfg(target_os = "none")]
+#[cfg(target_os = "none")] /* For NuttX */
 #[panic_handler]
 fn panic(_panic: &PanicInfo<'_>) -> ! {
     loop {}
+}
+
+/****************************************************************************
+ * rust_main
+ ****************************************************************************/
+
+fn rust_main(_argc: i32, _argv: *const *const u8) -> Result<i32, i32> {
+    /* "Hello, Rust!!" using printf() from libc */
+
+    nuttx::safe_puts("Hello, Rust!!");
+
+    /* Blink LED 1 using ioctl() from NuttX */
+
+    nuttx::safe_puts("Opening /dev/userleds");
+    let fd = nuttx::safe_open("/dev/userleds", nuttx::O_WRONLY)?;
+    nuttx::safe_puts("Set LED 1 to 1");
+
+    nuttx::safe_ioctl(fd, nuttx::ULEDIOC_SETALL, 1)?;
+    nuttx::safe_puts("Sleeping...");
+    unsafe {
+        nuttx::usleep(500_000);
+    }
+
+    nuttx::safe_puts("Set LED 1 to 0");
+    nuttx::safe_ioctl(fd, nuttx::ULEDIOC_SETALL, 0)?;
+    unsafe {
+        nuttx::close(fd);
+    }
+
+    /* Exit with status 0 */
+
+    Ok(0)
 }
 
 /****************************************************************************
@@ -63,38 +95,29 @@ fn panic(_panic: &PanicInfo<'_>) -> ! {
  * hello_rust_main
  ****************************************************************************/
 
- // TODO: Rename this function
-fn hello_rust_main(_argc: i32, _argv: *const *const u8) -> Result<i32, i32> {
-    /* "Hello, Rust!!" using printf() from libc */
+#[no_mangle]
+pub extern "C" fn hello_rust_main(_argc: i32, _argv: *const *const u8) -> i32 {
+    /* Call the New Version of Rust Main */
 
-    nuttx::safe_puts("Hello, Rust!!");
+    let res = rust_main(0, core::ptr::null());
 
-    /* Blink LED 1 using ioctl() from NuttX */
+    /* If Rust Main returns an error, print it */
 
-    nuttx::safe_puts("Opening /dev/userleds");
-    let fd = nuttx::safe_open("/dev/userleds", nuttx::O_WRONLY)?;
-    nuttx::safe_puts("Set LED 1 to 1");
-    
-    nuttx::safe_ioctl(fd, nuttx::ULEDIOC_SETALL, 1)?;
-    nuttx::safe_puts("Sleeping...");
-    unsafe { nuttx::usleep(500_000); }
-
-    nuttx::safe_puts("Set LED 1 to 0");
-    nuttx::safe_ioctl(fd, nuttx::ULEDIOC_SETALL, 0)?;
-    unsafe { nuttx::close(fd); }
-
-    /* Exit with status 0 */
-
-    Ok(0)
+    if let Err(e) = res {
+        unsafe {
+            nuttx::printf(b"ERROR: Failed with error %d\n\0" as *const u8, e);
+        }
+        e
+    } else {
+        0
+    }
 }
 
-// TODO: Rename the Main Function to hello_rust_main
-fn main() {
-    // Call the New Version of Rust Main
-    let res = hello_rust_main(0, core::ptr::null());
+/****************************************************************************
+ * main
+ ****************************************************************************/
 
-    // If Rust Main returns an error, print it
-    if let Err(e) = res {
-        unsafe { nuttx::printf(b"ERROR: Failed with error %d\n\0" as *const u8, e); }
-    }
+#[cfg(not(target_os = "none"))] /* For Testing Locally */
+fn main() {
+    hello_rust_main(0, core::ptr::null());
 }
