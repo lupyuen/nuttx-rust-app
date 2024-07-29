@@ -24,7 +24,10 @@ extern "C" {
  * Public Constants
  ****************************************************************************/
 
+pub const ENAMETOOLONG: i32 = 36;
 pub const O_WRONLY: i32 = 1 << 1;
+pub const PATH_MAX: usize = 256;
+pub const PUTS_MAX: usize = 256;
 pub const ULEDIOC_SETALL: i32 = 0x1d03;
 
 /****************************************************************************
@@ -51,8 +54,14 @@ fn copy_to_buffer(s: &str, buffer: &mut [u8]) -> Result<(), i32> {
 /* Safe Version of open() */
 
 pub fn safe_open(path: &str, oflag: i32) -> Result<i32, i32> {
-    let mut buffer = [0u8; 256];
-    copy_to_buffer(path, &mut buffer)?;
+    let mut buffer = [0u8; PATH_MAX];
+    let res = copy_to_buffer(path, &mut buffer);
+    if res.is_err() {
+        unsafe {
+            puts(b"ERROR: safe_open() path size exceeds PATH_MAX\0" as *const u8);
+        }
+        return Err(-ENAMETOOLONG);
+    }
 
     let fd = unsafe { open(buffer.as_ptr(), oflag) };
     if fd < 0 {
@@ -76,9 +85,15 @@ pub fn safe_ioctl(fd: i32, request: i32, arg: i32) -> Result<i32, i32> {
 /* Safe Version of puts() */
 
 pub fn safe_puts(s: &str) {
-    let mut buffer = [0u8; 256];
-    copy_to_buffer(s, &mut buffer).unwrap();
-    unsafe {
-        puts(buffer.as_ptr());
+    let mut buffer = [0u8; PUTS_MAX];
+    let res = copy_to_buffer(s, &mut buffer);
+    if res.is_err() {
+        unsafe {
+            puts(b"ERROR: safe_puts() string size exceeds PUTS_MAX\0" as *const u8);
+        }
+    } else {
+        unsafe {
+            puts(buffer.as_ptr());
+        }
     }
 }

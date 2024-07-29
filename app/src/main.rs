@@ -22,7 +22,7 @@
  * Attributes
  ****************************************************************************/
 
-/* Comment these lines for testing with Rust Standard Library */
+/* Comment out these lines for testing with Rust Standard Library */
 
 #![no_main]
 #![no_std]
@@ -107,7 +107,7 @@ pub extern "C" fn hello_rust_main(_argc: i32, _argv: *const *const u8) -> i32 {
 
     if let Err(e) = res {
         unsafe {
-            nuttx::printf(b"ERROR: Failed with error %d\n\0" as *const u8, e);
+            nuttx::printf(b"ERROR: rust_main() failed with error %d\n\0" as *const u8, e);
         }
         e
     } else {
