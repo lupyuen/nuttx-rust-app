@@ -32,7 +32,12 @@
 
 // TODO: Uncomment this
 // use core::panic::PanicInfo;
-mod nuttx;
+
+/****************************************************************************
+ * Modules
+ ****************************************************************************/
+
+ mod nuttx;
 
 /****************************************************************************
  * Private Functions
@@ -57,123 +62,28 @@ mod nuttx;
  ****************************************************************************/
 
  // TODO: Rename this function
-#[no_mangle]
 fn hello_rust_main(_argc: i32, _argv: *const *const u8) -> Result<i32, i32> {
     /* "Hello, Rust!!" using printf() from libc */
 
-    safe_puts("Hello, Rust!!");  // TODO: nuttx::safe_puts
+    nuttx::safe_puts("Hello, Rust!!");
 
     /* Blink LED 1 using ioctl() from NuttX */
 
-    safe_puts("Opening /dev/userleds");
-    let fd = safe_open("/dev/userleds", nuttx::O_WRONLY)?;  // TODO: nuttx::safe_open
-    safe_puts("Set LED 1 to 1");
+    nuttx::safe_puts("Opening /dev/userleds");
+    let fd = nuttx::safe_open("/dev/userleds", nuttx::O_WRONLY)?;
+    nuttx::safe_puts("Set LED 1 to 1");
     
-    safe_ioctl(fd, nuttx::ULEDIOC_SETALL, 1)?;  // TODO: nuttx::safe_ioctl
-    safe_puts("Sleeping...");
+    nuttx::safe_ioctl(fd, nuttx::ULEDIOC_SETALL, 1)?;
+    nuttx::safe_puts("Sleeping...");
     unsafe { nuttx::usleep(500_000); }
 
-    safe_puts("Set LED 1 to 0");
-    safe_ioctl(fd, nuttx::ULEDIOC_SETALL, 0)?;
+    nuttx::safe_puts("Set LED 1 to 0");
+    nuttx::safe_ioctl(fd, nuttx::ULEDIOC_SETALL, 0)?;
     unsafe { nuttx::close(fd); }
 
     /* Exit with status 0 */
 
     Ok(0)
-}
-
-// TODO: Remove this function
-// #[no_mangle]
-// pub extern "C" fn old_hello_rust_main(_argc: i32, _argv: *const *const u8) -> i32 {
-//     unsafe {
-//         /* "Hello, Rust!!" using printf() from libc */
-
-//         nuttx::printf(b"Old Hello, Rust!!\n\0" as *const u8);
-
-//         /* Blink LED 1 using ioctl() from NuttX */
-
-//         nuttx::printf(b"Opening /dev/userleds\n\0" as *const u8);
-//         let fd = nuttx::open(b"/dev/userleds\0" as *const u8, nuttx::O_WRONLY);
-//         if fd < 0 {
-//             nuttx::printf(b"Unable to open /dev/userleds, skipping the blinking\n\0" as *const u8);
-//             return 1;
-//         }
-
-//         nuttx::printf(b"Set LED 1 to 1\n\0" as *const u8);
-//         let ret = nuttx::ioctl(fd, nuttx::ULEDIOC_SETALL, 1);
-//         if ret < 0 {
-//             nuttx::printf(b"ERROR: ioctl(ULEDIOC_SETALL) failed\n\0" as *const u8);
-//             nuttx::close(fd);
-//             return 1;
-//         }
-
-//         nuttx::printf(b"Sleeping...\n\0" as *const u8);
-//         nuttx::usleep(500_000);
-
-//         nuttx::printf(b"Set LED 1 to 0\n\0" as *const u8);
-//         let ret = nuttx::ioctl(fd, nuttx::ULEDIOC_SETALL, 0);
-//         if ret < 0 {
-//             nuttx::printf(b"ERROR: ioctl(ULEDIOC_SETALL) failed\n\0" as *const u8);
-//             nuttx::close(fd);
-//             return 1;
-//         }
-
-//         nuttx::close(fd);
-//     }
-
-//     /* Exit with status 0 */
-
-//     0
-// }
-
-// TODO: Move to module nuttx: Safer Version of open()
-pub fn safe_open(path: &str, oflag: i32) -> Result<i32, i32> {
-    // TODO: Handle _path safely. Allocate a byte array, copy the bytes over, terminate with null
-    // Similar to this: https://github.com/lupyuen2/wip-nuttx-apps/blob/rust/examples/hello_rust/hello_rust_main.rs#L81
-    
-    let result = nuttx::safe_open(path, oflag);
-
-    match result {
-        Ok(fd) => {
-            println!("Opened /dev/userleds successfully");
-            Ok(fd)
-        },
-        Err(e) => {
-            println!("Unable to open /dev/userleds, skipping the blinking");
-            Err(e)
-        }
-    }
-}
-
-// TODO: Move to module nuttx: Safer Version of ioctl()
-pub fn safe_ioctl(fd: i32, request: i32, arg: i32) -> Result<i32, i32> {
-    let result = nuttx::safe_ioctl(fd, request, arg);
-
-    match result {
-        Ok(ret) => {
-            println!("SUCCESS: ioctl(ULEDIOC_SETALL) completed!");
-            Ok(ret)
-        },
-        Err(e) => {
-            println!("ERROR: ioctl(ULEDIOC_SETALL) failed!");
-            Err(e)
-        }
-    }
-}
-
-// TODO: Move to module nuttx: Safer Version of puts()
-pub fn safe_puts(s: &str) {
-    // TODO: to_owned() requires String from Rust Standard Library, won't work with Rust Core Library
-    // Need to allocate a byte array, copy the bytes over, terminate with null
-    // Similar to this: https://github.com/lupyuen2/wip-nuttx-apps/blob/rust/examples/hello_rust/hello_rust_main.rs#L81
-    // let mut str_c = s.to_owned();
-    // str_c.push('\n');
-    // let c_str = str_c.as_bytes();
-    // unsafe {
-    //     nuttx::puts(c_str.as_ptr());
-    // }
-    nuttx::safe_puts(s)
-    // println!("{}", s);
 }
 
 // TODO: Rename the Main Function to hello_rust_main
