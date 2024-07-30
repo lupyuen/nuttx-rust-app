@@ -6,9 +6,13 @@
 
 Read the articles...
 
+- ["Rust Apps on Apache NuttX RTOS and QEMU RISC-V"](https://lupyuen.github.io/articles/rust3)
+
 - ["Rust Custom Target for QEMU RISC-V on Apache NuttX RTOS"](https://lupyuen.github.io/articles/rust4)
 
-- ["Rust Apps on Apache NuttX RTOS and QEMU RISC-V"](https://lupyuen.github.io/articles/rust3)
+- ["Rust Apps on Ox64 BL808 RISC-V SBC and Apache NuttX RTOS"](https://lupyuen.github.io/articles/rust5)
+
+Read on to find out how everything all started...
 
 # Rust Custom Target for QEMU RISC-V on Apache NuttX RTOS
 
