@@ -1,5 +1,5 @@
 /****************************************************************************
- * apps/examples/hello_rust/hello_rust_main.rs
+ * apps/examples/leds_rust/leds_rust_main.rs
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -24,8 +24,14 @@
 
 /* Comment out these lines for testing with Rust Standard Library */
 
-#![no_main]
-#![no_std]
+// #![no_main]
+// #![no_std]
+
+/****************************************************************************
+ * Modules
+ ****************************************************************************/
+
+mod nuttx;
 
 /****************************************************************************
  * Uses
@@ -36,12 +42,7 @@ use core::{
     panic::PanicInfo,
     result::Result::{self, Err, Ok},
 };
-
-/****************************************************************************
- * Modules
- ****************************************************************************/
-
-mod nuttx;
+use nuttx::*;
 
 /****************************************************************************
  * Private Functions
@@ -64,24 +65,24 @@ fn panic(_panic: &PanicInfo<'_>) -> ! {
 fn rust_main(_argc: i32, _argv: *const *const u8) -> Result<i32, i32> {
     /* "Hello, Rust!!" using puts() from libc */
 
-    nuttx::safe_puts("Hello, Rust!!");
+    safe_puts("Hello, Rust!!");
 
     /* Blink LED 1 using ioctl() from NuttX */
 
-    nuttx::safe_puts("Opening /dev/userleds");
-    let fd = nuttx::safe_open("/dev/userleds", nuttx::O_WRONLY)?;
-    nuttx::safe_puts("Set LED 1 to 1");
+    safe_puts("Opening /dev/userleds");
+    let fd = safe_open("/dev/userleds", O_WRONLY)?;
+    safe_puts("Set LED 1 to 1");
 
-    nuttx::safe_ioctl(fd, nuttx::ULEDIOC_SETALL, 1)?;
-    nuttx::safe_puts("Sleeping...");
+    safe_ioctl(fd, ULEDIOC_SETALL, 1)?;
+    safe_puts("Sleeping...");
     unsafe {
-        nuttx::usleep(500_000);
+        usleep(500_000);
     }
 
-    nuttx::safe_puts("Set LED 1 to 0");
-    nuttx::safe_ioctl(fd, nuttx::ULEDIOC_SETALL, 0)?;
+    safe_puts("Set LED 1 to 0");
+    safe_ioctl(fd, ULEDIOC_SETALL, 0)?;
     unsafe {
-        nuttx::close(fd);
+        close(fd);
     }
 
     /* Exit with status 0 */
@@ -107,7 +108,7 @@ pub extern "C" fn hello_rust_main(_argc: i32, _argv: *const *const u8) -> i32 {
 
     if let Err(e) = res {
         unsafe {
-            nuttx::printf(
+            printf(
                 b"ERROR: rust_main() failed with error %d\n\0" as *const u8,
                 e,
             );
