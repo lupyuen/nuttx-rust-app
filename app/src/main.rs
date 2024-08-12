@@ -95,11 +95,11 @@ fn rust_main(_argc: i32, _argv: *const *const u8) -> Result<i32, i32> {
  ****************************************************************************/
 
 /****************************************************************************
- * hello_rust_main
+ * leds_rust_main
  ****************************************************************************/
 
 #[no_mangle]
-pub extern "C" fn hello_rust_main(_argc: i32, _argv: *const *const u8) -> i32 {
+pub extern "C" fn leds_rust_main(_argc: i32, _argv: *const *const u8) -> i32 {
     /* Call the program logic in Rust Main */
 
     let res = rust_main(0, core::ptr::null());
@@ -125,5 +125,5 @@ pub extern "C" fn hello_rust_main(_argc: i32, _argv: *const *const u8) -> i32 {
 
 #[cfg(not(target_os = "none"))] /* For Testing Locally */
 fn main() {
-    hello_rust_main(0, core::ptr::null());
+    leds_rust_main(0, core::ptr::null());
 }
