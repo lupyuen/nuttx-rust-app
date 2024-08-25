@@ -6,6 +6,8 @@
 
 Read the articles...
 
+- ["Early Days of Rust Apps on Apache NuttX RTOS"](https://lupyuen.github.io/articles/rust6)
+
 - ["Rust Apps on Apache NuttX RTOS and QEMU RISC-V"](https://lupyuen.github.io/articles/rust3)
 
 - ["Rust Custom Target for QEMU RISC-V on Apache NuttX RTOS"](https://lupyuen.github.io/articles/rust4)
