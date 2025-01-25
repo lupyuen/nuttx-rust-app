@@ -6,6 +6,8 @@
 
 Read the articles...
 
+- ["Rust Standard Library on Apache NuttX RTOS"](https://lupyuen.org/articles/rust7.html)
+
 - ["Early Days of Rust Apps on Apache NuttX RTOS"](https://lupyuen.github.io/articles/rust6)
 
 - ["Rust Apps on Apache NuttX RTOS and QEMU RISC-V"](https://lupyuen.github.io/articles/rust3)
